@@ -1,0 +1,25 @@
+--returns information on the top 10 most valuable customers in the top cities
+
+SELECT A.first_name,		
+       A.last_name,		
+       C.City,		
+       SUM(E.amount) as total_paid		
+FROM customer A		
+INNER JOIN address B on A.address_id = B.address_id		
+INNER JOIN city C on B.city_id = C.city_id		
+INNER JOIN country D on C.country_id = D.country_id		
+INNER JOIN payment E on E.customer_id = A.customer_id		
+WHERE		
+C.city IN(		
+	SELECT city	
+	FROM customer A	
+	INNER JOIN address B on A.address_id = B.address_id	
+	INNER JOIN city C on B.city_id = C.city_id	
+	INNER JOIN country D on C.country_id = D.country_id	
+	GROUP BY C.city	
+	ORDER BY COUNT(A.customer_id) desc	
+	LIMIT 10	
+)		
+		
+GROUP BY a.first_name, a.last_name,C.city		
+ORDER BY total_paid DESC LIMIT 10		
